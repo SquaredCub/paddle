@@ -31,11 +31,12 @@ function load_level(index)
             if ch ~= "0" then
                 add(
                     bricks, {
-                        x = (col - 1) * brick_width + 4,
-                        y = (row - 1) * (brick_height + 2) + 4,
+                        x = (col - 1) * brick_width,
+                        y = (row - 1) * brick_height + 4,
                         w = brick_width,
                         h = brick_height,
                         color = bricks_register[ch].color,
+                        shadow = bricks_register[ch].shadow,
                         bonus = bricks_register[ch].bonus
                     }
                 )
@@ -44,11 +45,15 @@ function load_level(index)
     end
 end
 
-function drw_brick(x, y, color)
-    pal(7, color)
-    spr(3, x, y)
-    spr(4, x + 8, y)
+function drw_brick(b)
+    pal(5, b.shadow or 5)
+    pal(6, b.color)
+    spr(11, b.x, b.y)
+    spr(12, b.x + (b.w / 2), b.y)
     pal()
+    -- if b.bonus then
+    --     print("🐱", b.x + (b.w / 2) - 3, b.y, 0)
+    -- end
 end
 
 function center_text(text, y, color)
@@ -80,9 +85,9 @@ function handle_inputs()
 
     -- controls
     if btn(➡️) then
-        paddle.x = clamp(paddle.x + paddle.speed, 1, 127 - paddle.w)
+        paddle.x = clamp(paddle.x + paddle.speed, 0, 128 - paddle.w)
     elseif btn(⬅️) then
-        paddle.x = clamp(paddle.x - paddle.speed, 1, 127 - paddle.w)
+        paddle.x = clamp(paddle.x - paddle.speed, 0, 128 - paddle.w)
     end
 end
 

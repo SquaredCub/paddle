@@ -28,7 +28,8 @@ function _init()
     function reset_paddle(hard)
         if hard then
             paddle = {
-                x = 64 - default_paddle_width / 2 + 2,
+                -- x = 64 - default_paddle_width / 2 + 2,
+                x = 64 - default_paddle_width / 2 - 4, --bug to be fixed
                 y = 124,
                 w = 16,
                 h = 4,
@@ -44,7 +45,7 @@ function _init()
             y = 120,
             dx = 0,
             dy = -1,
-            r = 2
+            r = 2.5
         }
     end
 
@@ -86,12 +87,12 @@ function _update60()
         end
 
         -- bounce off left/right walls
-        if next_ball.x < next_ball.r + 1 or next_ball.x + next_ball.r >= 127 then
+        if next_ball.x < next_ball.r or next_ball.x + next_ball.r >= 128 then
             ball.dx = -ball.dx
             sfx(2)
         end
         -- bounce off top
-        if next_ball.y < next_ball.r + 1 then
+        if next_ball.y < next_ball.r then
             ball.dy = -ball.dy
             sfx(2)
         end
@@ -111,10 +112,6 @@ function _update60()
             game_state = game_states.gameover
             sfx(3)
         end
-
-        -- move ball
-        ball.x += ball.dx
-        ball.y += ball.dy
 
         -- move bonuses
         for b in all(bonuses) do
@@ -147,13 +144,17 @@ function _update60()
                 sfx(4)
             end
         end
+
+        -- move ball
+        ball.x += ball.dx
+        ball.y += ball.dy
     end
 end
 
 function _draw()
     cls()
     -- border
-    rect(0, 0, 127, 128, 6)
+    rectfill(0, 0, 128, 128, 1)
     -- debug
 
     -- print("level " .. current_lvl, 2, 2, 7)
@@ -167,7 +168,7 @@ function _draw()
         draw_start()
     elseif game_state == game_states.playing or game_state == game_states.paused then
         for b in all(bricks) do
-            drw_brick(b.x, b.y, b.color)
+            drw_brick(b)
         end
         for b in all(bonuses) do
             spr(bonuses_register[b.type].sprite, b.x, b.y)
